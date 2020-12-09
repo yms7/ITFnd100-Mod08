@@ -5,9 +5,6 @@
 ## Assignment 08
 ...
 
-## Assignment 08
-...
-
 ```
 # ------------------------------------------------------------------------ #
 # Title: Assignment 08 Yong Son
@@ -15,7 +12,8 @@
 # ChangeLog (Who,When,What):
 # RRoot,1.1.2030,Created started script
 # RRoot,1.1.2030,Added pseudo-code to start assignment 8
-# YSon,12.5.2020,Modified code to complete assignment 8
+# YSon,12.6.2020,Modified code to complete assignment 8
+# YSon,12.8.2020,Modified code to fix comments field and add exception class
 # ------------------------------------------------------------------------ #
 
 # Data ------------------------------------------------------------------- #
@@ -24,21 +22,21 @@ lstOfProductObjects = []
 strChoice = ""  # Captures the user option selection
 strStatus = ""  # Captures the status of an processing functions
 
+class InvalidChoice(Exception):
+    def __str__(self):
+        return 'Please enter the valid menu options'
+
 class Product:
     # -- Constructor --
     def __init__(self, product_name: str, product_value: int):
-        """ Sets initial values and returns a Person object """
+        """ Sets initial values and returns a Product object """
         # -- Attributes --
         self.__product_name = product_name
         self.__product_value = product_value
     """Stores data about a product:
     properties:
-        product_name: (string) with the products's  name
+        product_name: (string) with the products's name
         product_price: (float) with the products's standard price
-    methods:
-    changelog: (When,Who,What)
-        RRoot,1.1.2030,Created Class
-        <Your Name>,<Today's Date>,Modified code to complete assignment 8
     """
     # --Properties--
     @property
@@ -68,23 +66,16 @@ class Product:
         return self.__str__()
 
     def __str__(self):
-        return self.product_name + ',' + self.product_value
-
+        return self.__product_name + ',' + self.__product_value
 
 # Data -------------------------------------------------------------------- #
 
 # Processing  ------------------------------------------------------------- #
 class FileProcessor:
     """Processes data to and from a file and a list of product objects:
-
     methods:
         save_data_to_file(file_name, list_of_product_objects):
-
         read_data_from_file(file_name): -> (a list of product objects)
-
-    changelog: (When,Who,What)
-        RRoot,1.1.2030,Created Class
-        <Your Name>,<Today's Date>,Modified code to complete assignment 8
     """
     def write_data_to_file(file_name, list_of_product_objects):
         file = open(file_name, "w")
@@ -122,13 +113,12 @@ class IO:
     def __doc__(self):
         return 'This class holds product data'
     def __str__(self):
-        return self.product_name + ',' + self.product_value
+        return self.__product_name + ',' + self.__product_value
     pass
 
     # TODO: Add code to show menu to user
     def print_menu():
         """  Display a menu of choices to the user
-
         :return: nothing
         """
         print('''
@@ -142,14 +132,12 @@ class IO:
     # TODO: Add code to get user's choice
     def input_menu_choice():
         """ Gets the menu choice from a user
-        :return: string
-        """
+        :return: string"""
         choice = str(input("Which option would you like to perform? [1 to 4] - ")).strip()
         return choice
 
     # TODO: Add code to show the current data from the file to user
     def print_current_Tasks_in_list(list_of_product_objects):
-        print() # Add an extra line for looks
         print("******* The current products and values are: *******")
         for row in list_of_product_objects:
             print(row["Name"] + " (" + row["Value"] + ")")
@@ -163,7 +151,6 @@ class IO:
 
     def input_press_to_continue(optional_message=''):
         """ Pause program and show a message before continuing
-
         :param optional_message:  An optional message you want to display
         :return: nothing
         """
@@ -185,7 +172,7 @@ class IO:
 FileProcessor.read_data_from_file(strFileName, lstOfProductObjects)  # read file data
 
 # Step 2 - Display a menu of choices to the user
-while(True):
+while True:
     # Step 3 Show current data
     IO.print_current_Tasks_in_list(lstOfProductObjects)  # Show current data in the list/table
 # Show user a menu of options
@@ -195,39 +182,45 @@ while(True):
     # Show user current data in the list of product objects
     # Let user add data to the list of product objects
     # let user save current data to file and exit program
-
 # Main Body of Script  ---------------------------------------------------- #
     # Step 4 - Process user's menu choice
-    if strChoice.strip() == '1':  # Add a new Task
-        strName, strValue = IO.input_new_task_and_priority()
-        FileProcessor.add_data_to_list(strName, strValue, lstOfProductObjects)
-        IO.print_current_Tasks_in_list(lstOfProductObjects)
-        IO.input_press_to_continue(strStatus)
-        continue  # to show the menu
-
-    elif strChoice == '2':   # Save Data to File
-        strChoice = IO.input_yes_no_choice("Save this data to file? (y/n) - ")
-        if strChoice.lower() == "y":
-            print("Following data will be save to a file: ")
-            IO.print_current_Tasks_in_list(lstOfProductObjects)
-            FileProcessor.write_data_to_file(strFileName, lstOfProductObjects)
-            IO.input_press_to_continue(strStatus)
-        else:
-            IO.input_press_to_continue("Save Cancelled!")
-        continue  # to show the menu
-
-    elif strChoice == '3':  # Reload Data from File
-        print("Warning: Unsaved Data Will Be Lost!")
-        strChoice = IO.input_yes_no_choice("Are you sure you want to reload data from file? (y/n) -  ")
-        if strChoice.lower() == 'y':
-            FileProcessor.read_data_from_file(strFileName, lstOfProductObjects)
+    try:
+        if strChoice.strip() == '1':  # Add a new Task
+            strName, strValue = IO.input_new_task_and_priority()
+            FileProcessor.add_data_to_list(strName, strValue, lstOfProductObjects)
             IO.print_current_Tasks_in_list(lstOfProductObjects)
             IO.input_press_to_continue(strStatus)
-        else:
-            IO.input_press_to_continue("File Reload  Cancelled!")
-        continue  # to show the menu
+            continue  # to show the menu
 
-    elif strChoice == '4':  #  Exit Program
-        print("Goodbye!")
-        break   # and Exit
+        elif strChoice == '2':   # Save Data to File
+            strChoice = IO.input_yes_no_choice("Save this data to file? (y/n) - ")
+            if strChoice.lower() == "y":
+                print("Following data will be save to a file: ")
+                IO.print_current_Tasks_in_list(lstOfProductObjects)
+                FileProcessor.write_data_to_file(strFileName, lstOfProductObjects)
+                IO.input_press_to_continue(strStatus)
+            else:
+                IO.input_press_to_continue("Save Cancelled!")
+            continue  # to show the menu
+
+        elif strChoice == '3':  # Reload Data from File
+            print("Warning: Unsaved Data Will Be Lost!")
+            strChoice = IO.input_yes_no_choice("Are you sure you want to reload data from file? (y/n) -  ")
+            if strChoice.lower() == 'y':
+                FileProcessor.read_data_from_file(strFileName, lstOfProductObjects)
+                IO.print_current_Tasks_in_list(lstOfProductObjects)
+                IO.input_press_to_continue(strStatus)
+            else:
+                IO.input_press_to_continue("File Reload  Cancelled!")
+            continue  # to show the menu
+
+        elif strChoice == '4':  #  Exit Program
+            print("Goodbye!")
+            break   # and Exit
+        else:
+            raise InvalidChoice()
+
+    except Exception as e:
+        print("The Python error message: ")
+        print(e, "\n")
 ```
